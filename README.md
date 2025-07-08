@@ -2,45 +2,55 @@
 
 This project recreates the Xiaomi Air Purifier UI in Home Assistant using fully custom YAML and lightweight styling, replicating the glowing air ring and smart control buttons found in the official Mi Home app.
 
-![Preview](preview.gif)  
+![Preview](docs/good.jpg)
 *Aesthetic recreation with colour-adaptive ring, animated background, and dynamic speed control.*
 
 ---
 
-## 🌫 Features
+## 🌫️ Overview
 
-- 🟢 Pulsating animated air ring based on PM2.5
-- 🟠 Air quality grading with µg/m³ units
-- 🔴 Colour-coded controls that match air quality
-- 💨 Mode toggle buttons: Power, Auto, Sleep, Favourite
-- 📈 Smooth fan speed slider (0–14)
-- 🎞 Custom HTML iframe with dynamic particle animation
-- 100% YAML-based – no custom JS coding
+This custom dashboard card visualises real-time PM2.5 air quality levels using animated radial gradients and floating particle dots. It also includes:
 
----
-
-## 🎨 Xiaomi PM2.5 Colour Coding
-
-Xiaomi air purifiers use a colour-coded ring to indicate air quality based on PM2.5 levels:
-
-| Air Quality  | PM2.5 Value (μg/m³) | Ring Colour   |
-|--------------|----------------------|---------------|
-| Good         | 0–75                 | Green/Teal    |
-| Moderate     | 76–150               | Yellow/Orange |
-| Poor         | 151+                 | Red           |
-
-These thresholds are applied in both the glow ring and all button icon colours for a consistent UI.
+- Air purifier controls (power, preset modes, and favourite levels)
+- Custom slider to adjust fan speed
+- Colour-coded visual indicator based on air quality
+- Support for Xiaomi purifier entities via MQTT or cloud
 
 ---
 
-## 🧱 Required HACS Cards
+## 🎨 Air Quality Colour Codes
 
-Please install the following via [HACS](https://hacs.xyz/):
+| Air Quality  | PM2.5 Range (µg/m³) | Label     | Colour  |
+|--------------|----------------------|-----------|---------|
+| Good         | ≤ 35                 | `Good`    | Green   |
+| Moderate     | 36–75                | `Moderate`| Orange  |
+| Poor         | 76–150               | `Poor`    | Amber   |
+| Polluted     | > 150                | `Polluted`| Red     |
 
-- `button-card`
-- `config-template-card`
-- `my-slider-v2`
-- `card-mod` (for advanced styling)
+---
+
+## 📸 Screenshots
+
+### Good (≤ 35 µg/m³)
+![Good](docs/good.jpg)
+
+### Moderate (36–75 µg/m³)
+![Moderate](docs/moderate.jpg)
+
+### Poor (76–150 µg/m³)
+![Poor](docs/poor.jpg)
+
+### Polluted (> 150 µg/m³)
+![Polluted](docs/polluted.jpg)
+
+---
+
+## 🧪 How It Works
+
+- A `button-card` overlays the central radial glow and shows the current PM2.5 reading along with a text label (Good, Moderate, etc.)
+- A `config-template-card` injects the PM2.5 value into a local `dots_canvas.html` file via iframe to render animated air particles
+- The glow and icon colours dynamically respond to the sensor value, changing shades and intensity
+- Full fan control is integrated with preset modes and a slider
 
 ---
 
@@ -57,6 +67,21 @@ Place these in your Home Assistant configuration directory:
 ```
 
 Ensure `/config/www/dots_canvas.html` is accessible at `/local/dots_canvas.html`.
+
+---
+
+## 📦 Requirements
+
+- Home Assistant 
+- HACS with the following custom cards installed:
+  - [`button-card`](https://github.com/custom-cards/button-card)
+  - [`config-template-card`](https://github.com/iantrich/config-template-card)
+  - [`my-slider-v2`]
+
+- Xiaomi purifier and PM2.5 sensor integration via:
+  - Xiaomi Miio
+  - MQTT
+  - Or any compatible air quality sensor
 
 ---
 
@@ -101,9 +126,3 @@ You can also paste it directly into your dashboard as a `vertical-stack` card.
 
 ---
 
-## 💬 Community
-
-Drop a comment or feedback on the [Reddit thread](https://www.reddit.com/) (replace with real link).  
-If there's enough interest, I’ll publish a step-by-step tutorial and make this a dashboard package!
-
----
