@@ -1,0 +1,110 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>PM2.5 Dots Inward</title>
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      background: transparent;
+      overflow: hidden;
+      width: 100%;
+      height: 100%;
+    }
+    canvas {
+      display: block;
+      width: 100%;
+      height: 100%;
+    }
+  </style>
+</head>
+<body>
+<canvas id="dotCanvas"></canvas>
+<script>
+  const canvas = document.getElementById("dotCanvas");
+  const ctx = canvas.getContext("2d");
+
+  // Force full size on load
+  function resizeCanvas() {
+    canvas.width = canvas.clientWidth || window.innerWidth;
+    canvas.height = canvas.clientHeight || window.innerHeight;
+  }
+
+  window.addEventListener("resize", resizeCanvas);
+  resizeCanvas();
+
+  const urlParams = new URLSearchParams(window.location.search);
+  const pm25 = parseFloat(urlParams.get("pm25")) || 20;
+
+  function getDotColor(pm) {
+    if (pm <= 35) return "rgba(0, 255, 200, 0.75)";
+    if (pm <= 75) return "rgba(255, 188, 82, 0.75)";
+    if (pm <= 150) return "rgba(253, 139, 71, 0.75)";
+    return "rgba(254, 51, 55, 0.75)";
+  }
+
+  const dotColor = getDotColor(pm25);
+  const dots = [];
+
+  function createDot() {
+    const startX = Math.random() * canvas.width;
+    const startY = Math.random() * canvas.height;
+    const dx = (canvas.width / 2 - startX) / 300;
+    const dy = (canvas.height / 2 - startY) / 300;
+    return {
+      x: startX,
+      y: startY,
+      dx: dx,
+      dy: dy,
+      r: Math.random() * 6 + 2,
+      color: dotColor,
+      opacity: 1,
+      scale: 1,
+      life: 0,
+      maxLife: Math.random() * 200 + 200
+    };
+  }
+
+  for (let i = 0; i < 50; i++) {
+    dots.push(createDot());
+  }
+
+  function updateDots() {
+    for (let i = 0; i < dots.length; i++) {
+      const dot = dots[i];
+      dot.life++;
+      dot.x += dot.dx;
+      dot.y += dot.dy;
+      dot.opacity = 1 - dot.life / dot.maxLife;
+      dot.scale = 1 - dot.life / dot.maxLife;
+
+      if (dot.life >= dot.maxLife || dot.opacity <= 0.01 || dot.scale <= 0.05) {
+        dots[i] = createDot();
+      }
+    }
+  }
+
+  function drawDots() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    for (const dot of dots) {
+      ctx.beginPath();
+      ctx.globalAlpha = dot.opacity;
+      ctx.fillStyle = dot.color;
+      ctx.arc(dot.x, dot.y, dot.r * dot.scale, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    ctx.globalAlpha = 1;
+  }
+
+  function animate() {
+    updateDots();
+    drawDots();
+    requestAnimationFrame(animate);
+  }
+
+  animate();
+</script>
+</body>
+</html>
