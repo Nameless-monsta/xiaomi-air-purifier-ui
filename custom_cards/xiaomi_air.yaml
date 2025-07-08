@@ -1,1 +1,335 @@
-# Placeholder for xiaomi_air.yaml
+type: vertical-stack
+cards:
+  - type: custom:button-card
+    entity: fan.xiaomi_cpa4_4c01_air_purifier
+    tap_action:
+      action: more-info
+    show_name: false
+    show_icon: false
+    show_state: false
+    styles:
+      card:
+        - background: none
+        - height: 200px
+        - position: absolute
+        - margin-top: 0px
+        - top: 0
+        - left: 0
+        - z-index: 1
+      custom_fields:
+        label:
+          - position: absolute
+          - top: 50%
+          - left: 50%
+          - transform: translate(-50%, -50%)
+          - font-size: 22px
+          - font-weight: bold
+          - color: black
+          - text-align: center
+          - line-height: 1.8
+          - white-space: pre-line
+    custom_fields:
+      label: |
+        [[[
+          let raw = states['sensor.xiaomi_cpa4_4c01_pm25_density'].state;
+          let pm = parseFloat(raw);
+          if (pm <= 35) return `Good\n${pm} µg/m³`;
+          if (pm <= 75) return `Moderate\n${pm} µg/m³`;
+          if (pm <= 150) return `Poor\n${pm} µg/m³`;
+          return `Polluted\n${pm} µg/m³`;
+        ]]]
+    card_mod:
+      style: |
+        ha-card::before {
+          content: '';
+          position: absolute;
+          top: 50%;
+          left: 50%;
+          width: 180px;
+          height: 180px;
+          background: radial-gradient(
+            circle,
+            {% set pm = states('sensor.xiaomi_cpa4_4c01_pm25_density') | float %}
+            {% if pm <= 35 %}
+              rgba(0, 255, 200, 0.75) 10%,
+              rgba(0, 255, 200, 0.4) 50%,
+              rgba(0, 255, 200, 0.1) 75%,
+            {% elif pm <= 75 %}
+              rgba(255, 188, 82, 0.75) 10%,
+              rgba(255, 188, 82, 0.4) 50%,
+              rgba(255, 188, 82, 0.1) 75%,
+            {% elif pm <= 150 %}
+              rgba(253, 139, 71, 0.75) 10%,
+              rgba(253, 139, 71, 0.4) 50%,
+              rgba(253, 139, 71, 0.1) 75%,
+            {% else %}
+              rgba(254, 51, 55, 0.75) 10%,
+              rgba(254, 51, 55, 0.4) 50%,
+              rgba(254, 51, 55, 0.1) 75%,
+            {% endif %}
+            transparent 100%
+          );
+          border-radius: 50%;
+          transform: translate(-50%, -50%);
+          animation: xiaomiPulse 3s ease-in-out infinite;
+          filter: blur(10px);
+        }
+
+        @keyframes xiaomiPulse {
+          0%, 100% {
+            transform: translate(-50%, -50%) scale(0.85);
+            opacity: 1;
+          }
+          50% {
+            transform: translate(-50%, -50%) scale(1.4);
+            opacity: 0.45;
+          }
+        }
+  - type: custom:config-template-card
+    variables:
+      pm: states['sensor.xiaomi_cpa4_4c01_pm25_density'].state
+    entities:
+      - sensor.xiaomi_cpa4_4c01_pm25_density
+    card:
+      type: iframe
+      url: ${"/local/dots_canvas.html?pm25=" + pm}
+      card_mod:
+        style: |
+          ha-card {
+            height: 200px !important;
+            overflow: hidden;
+            margin-top: -8px !important;
+          }
+          iframe {
+            height: 100% !important;
+            width: 100% !important;
+            border: none;
+          }
+  - type: horizontal-stack
+    cards:
+      - type: custom:button-card
+        icon: mdi:power
+        tap_action:
+          action: toggle
+        entity: fan.xiaomi_cpa4_4c01_air_purifier
+        show_name: false
+        styles:
+          icon:
+            - color: grey
+        state:
+          - value: "off"
+            styles:
+              icon:
+                - color: grey
+          - value: "on"
+            styles:
+              icon:
+                - color: |
+                    [[[
+                      const pm = parseFloat(states['sensor.xiaomi_cpa4_4c01_pm25_density'].state);
+                      if (isNaN(pm)) return "rgba(200,200,200,0.5)";
+                      if (pm <= 35) return "rgba(0, 255, 200, 1)";
+                      if (pm <= 75) return "rgba(255, 188, 82, 1)";
+                      if (pm <= 150) return "rgba(253, 139, 71, 1)";
+                      return "rgba(254, 51, 55, 1)";
+                    ]]]
+      - type: custom:button-card
+        icon: mdi:weather-night
+        tap_action:
+          action: call-service
+          service: fan.set_preset_mode
+          service_data:
+            entity_id: fan.xiaomi_cpa4_4c01_air_purifier
+            preset_mode: Sleep
+        entity: fan.xiaomi_cpa4_4c01_air_purifier
+        show_name: false
+        styles:
+          icon:
+            - color: grey
+        state:
+          - operator: template
+            value: |
+              [[[ return entity.attributes.preset_mode === 'Sleep'; ]]]
+            styles:
+              icon:
+                - color: |
+                    [[[
+                      const pm = parseFloat(states['sensor.xiaomi_cpa4_4c01_pm25_density'].state);
+                      if (isNaN(pm)) return "rgba(200,200,200,0.5)";
+                      if (pm <= 35) return "rgba(0, 255, 200, 1)";
+                      if (pm <= 75) return "rgba(255, 188, 82, 1)";
+                      if (pm <= 150) return "rgba(253, 139, 71, 1)";
+                      return "rgba(254, 51, 55, 1)";
+                    ]]]
+      - type: custom:button-card
+        icon: mdi:circle-slice-2
+        tap_action:
+          action: call-service
+          service: number.set_value
+          service_data:
+            entity_id: number.xiaomi_cpa4_4c01_favorite_level
+            value: 3
+        entity: number.xiaomi_cpa4_4c01_favorite_level
+        show_name: false
+        styles:
+          icon:
+            - color: grey
+        state:
+          - operator: "=="
+            value: 3
+            styles:
+              icon:
+                - color: |
+                    [[[
+                      const pm = parseFloat(states['sensor.xiaomi_cpa4_4c01_pm25_density'].state);
+                      if (isNaN(pm)) return "rgba(200,200,200,0.5)";
+                      if (pm <= 35) return "rgba(0, 255, 200, 1)";
+                      if (pm <= 75) return "rgba(255, 188, 82, 1)";
+                      if (pm <= 150) return "rgba(253, 139, 71, 1)";
+                      return "rgba(254, 51, 55, 1)";
+                    ]]]
+      - type: custom:button-card
+        icon: mdi:circle-slice-4
+        tap_action:
+          action: call-service
+          service: number.set_value
+          service_data:
+            entity_id: number.xiaomi_cpa4_4c01_favorite_level
+            value: 7
+        entity: number.xiaomi_cpa4_4c01_favorite_level
+        show_name: false
+        styles:
+          icon:
+            - color: grey
+        state:
+          - operator: "=="
+            value: 7
+            styles:
+              icon:
+                - color: |
+                    [[[
+                      const pm = parseFloat(states['sensor.xiaomi_cpa4_4c01_pm25_density'].state);
+                      if (isNaN(pm)) return "rgba(200,200,200,0.5)";
+                      if (pm <= 35) return "rgba(0, 255, 200, 1)";
+                      if (pm <= 75) return "rgba(255, 188, 82, 1)";
+                      if (pm <= 150) return "rgba(253, 139, 71, 1)";
+                      return "rgba(254, 51, 55, 1)";
+                    ]]]
+      - type: custom:button-card
+        icon: mdi:circle-slice-6
+        tap_action:
+          action: call-service
+          service: number.set_value
+          service_data:
+            entity_id: number.xiaomi_cpa4_4c01_favorite_level
+            value: 10
+        entity: number.xiaomi_cpa4_4c01_favorite_level
+        show_name: false
+        styles:
+          icon:
+            - color: grey
+        state:
+          - operator: "=="
+            value: 10
+            styles:
+              icon:
+                - color: |
+                    [[[
+                      const pm = parseFloat(states['sensor.xiaomi_cpa4_4c01_pm25_density'].state);
+                      if (isNaN(pm)) return "rgba(200,200,200,0.5)";
+                      if (pm <= 35) return "rgba(0, 255, 200, 1)";
+                      if (pm <= 75) return "rgba(255, 188, 82, 1)";
+                      if (pm <= 150) return "rgba(253, 139, 71, 1)";
+                      return "rgba(254, 51, 55, 1)";
+                    ]]]
+      - type: custom:button-card
+        icon: mdi:refresh-auto
+        tap_action:
+          action: call-service
+          service: fan.set_preset_mode
+          service_data:
+            entity_id: fan.xiaomi_cpa4_4c01_air_purifier
+            preset_mode: Auto
+        entity: fan.xiaomi_cpa4_4c01_air_purifier
+        show_name: false
+        styles:
+          icon:
+            - color: grey
+        state:
+          - operator: template
+            value: |
+              [[[ return entity.attributes.preset_mode === 'Auto'; ]]]
+            styles:
+              icon:
+                - color: |
+                    [[[
+                      const pm = parseFloat(states['sensor.xiaomi_cpa4_4c01_pm25_density'].state);
+                      if (isNaN(pm)) return "rgba(200,200,200,0.5)";
+                      if (pm <= 35) return "rgba(0, 255, 200, 1)";
+                      if (pm <= 75) return "rgba(255, 188, 82, 1)";
+                      if (pm <= 150) return "rgba(253, 139, 71, 1)";
+                      return "rgba(254, 51, 55, 1)";
+                    ]]]
+  - type: vertical-stack
+    cards:
+      - type: custom:button-card
+        entity: fan.xiaomi_cpa4_4c01_air_purifier
+        name: Fan Speed
+        tap_action:
+          action: none
+        styles:
+          grid:
+            - grid-template-columns: 64px 1fr
+            - grid-template-areas: "\" i n \""
+          card:
+            - background: none
+            - height: 40px
+            - position: absolute
+            - z-index: 1
+          img_cell:
+            - width: 75px
+          icon:
+            - width: 40
+            - color: null
+          name:
+            - justify-self: start
+            - font-size: 14px
+            - font-weight: 400
+            - color: null
+      - type: custom:my-slider-v2
+        entity: fan.xiaomi_cpa4_4c01_air_purifier
+        allowTapping: true
+        allowSliding: true
+        styles:
+          container:
+            - border-radius: 30px
+          card:
+            - margin-top: "-8px"
+            - height: 40px
+          progress:
+            - background: |
+                [[[
+                  const pm = parseFloat(states['sensor.xiaomi_cpa4_4c01_pm25_density'].state);
+                  if (isNaN(pm)) {
+                    return 'linear-gradient(145deg, rgba(200,200,200,0.2) 0%, rgba(50,50,52,1) 100%)';
+                  }
+                  if (pm <= 35) {
+                    return 'linear-gradient(145deg, rgba(0,255,200,0.5) 0%, rgba(0,255,200,1) 100%)';
+                  }
+                  if (pm <= 75) {
+                    return 'linear-gradient(145deg, rgba(255,188,82,0.5) 0%, rgba(255,188,82,1) 100%)';
+                  }
+                  if (pm <= 150) {
+                    return 'linear-gradient(145deg, rgba(253,139,71,0.5) 0%, rgba(253,139,71,1) 100%)';
+                  }
+                  return 'linear-gradient(145deg, rgba(254,51,55,0.5) 0%, rgba(254,51,55,1) 100%)';
+                ]]]
+          thumb:
+            - width: 3px
+            - height: 40%
+            - background: "#1f2937"
+            - border-radius: 5px
+            - top: 30%
+            - margin-right: 12px
+          track:
+            - background: var(--active-light-off)
