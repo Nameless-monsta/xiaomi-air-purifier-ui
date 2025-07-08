@@ -112,7 +112,7 @@ This lets the iframe act as a live particle ring that adapts to real-world air q
 
 ## 📋 YAML Preview
 
-A full copy of the card YAML can be found in [`xiaomi_air.yaml`](./xiaomi_air.yaml).
+A full copy of the card YAML can be found in [`xiaomi_air.yaml`](custom_cards/xiaomi_air.yaml).
 
 You can also paste it directly into your dashboard as a `vertical-stack` card.
 
