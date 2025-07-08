@@ -2,7 +2,7 @@
 
 This project recreates the Xiaomi Air Purifier UI in Home Assistant using fully custom YAML and lightweight styling, replicating the glowing air ring and smart control buttons found in the official Mi Home app.
 
-![Preview](docs/good.jpg)
+![Preview](docs/Good.jpg)
 *Aesthetic recreation with colour-adaptive ring, animated background, and dynamic speed control.*
 
 ---
@@ -32,16 +32,16 @@ This custom dashboard card visualises real-time PM2.5 air quality levels using a
 ## 📸 Screenshots
 
 ### Good (≤ 35 µg/m³)
-![Good](docs/good.jpg)
+![Good](docs/Good.jpg)
 
 ### Moderate (36–75 µg/m³)
-![Moderate](docs/moderate.jpg)
+![Moderate](docs/Moderate.jpg)
 
 ### Poor (76–150 µg/m³)
-![Poor](docs/poor.jpg)
+![Poor](docs/Poor.jpg)
 
 ### Polluted (> 150 µg/m³)
-![Polluted](docs/polluted.jpg)
+![Polluted](docs/Polluted.jpg)
 
 ---
 
