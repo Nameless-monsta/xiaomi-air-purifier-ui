@@ -76,7 +76,7 @@ Ensure `/config/www/dots_canvas.html` is accessible at `/local/dots_canvas.html`
 - HACS with the following custom cards installed:
   - [`button-card`](https://github.com/custom-cards/button-card)
   - [`config-template-card`](https://github.com/iantrich/config-template-card)
-  - [`my-slider-v2`]
+  - [`my-slider-v2`](https://github.com/AnthonMS/my-cards/blob/main/docs/installation.md)
 
 - Xiaomi purifier and PM2.5 sensor integration via:
   - Xiaomi Miio
