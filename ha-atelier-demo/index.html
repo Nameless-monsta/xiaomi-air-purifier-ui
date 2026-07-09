@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="theme-color" content="#101010" />
+  <title>Atelier Home — Interactive HA Concept</title>
+  <link rel="stylesheet" href="./style.css" />
+  <script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.module.js"}}</script>
+  <script type="module" src="./main.js"></script>
+</head>
+<body>
+  <div id="app">
+    <canvas id="scene"></canvas>
+
+    <header class="topbar">
+      <button class="brand" data-nav="home" aria-label="Home">ATELIER / HOME</button>
+      <div class="top-meta"><span id="clock">21:41</span><button class="menu-toggle" aria-label="Open menu">MENU</button></div>
+    </header>
+
+    <main>
+      <section class="view active" id="home-view" data-view="home">
+        <div class="eyebrow">PRIVATE CONTROL ENVIRONMENT</div>
+        <h1 class="hero-title">Your home,<br/>as an instrument.</h1>
+        <p class="hero-copy">Touch a room. The interface reshapes around it.</p>
+        <div class="room-index">
+          <button class="room-link" data-room="living"><span>01</span><strong>Living Room</strong><em>7 devices</em></button>
+          <button class="room-link" data-room="bedroom"><span>02</span><strong>Bedroom</strong><em>4 devices</em></button>
+          <button class="room-link" data-room="kitchen"><span>03</span><strong>Kitchen</strong><em>5 devices</em></button>
+        </div>
+        <div class="gesture-hint">DRAG TO ORBIT · TAP A ROOM</div>
+      </section>
+
+      <section class="view" id="room-view" data-view="room">
+        <div class="room-heading">
+          <button class="back" data-nav="home">← HOME</button>
+          <div class="eyebrow" id="room-number">ROOM 01</div>
+          <h2 id="room-title">Living Room</h2>
+          <p id="room-status">25.0°C · calm · 3 active</p>
+        </div>
+        <div class="device-rail" id="device-rail"></div>
+        <div class="room-footer">
+          <button class="scene-chip active" data-scene="calm">CALM</button>
+          <button class="scene-chip" data-scene="movie">MOVIE</button>
+          <button class="scene-chip" data-scene="bright">BRIGHT</button>
+          <button class="scene-chip" data-scene="off">ALL OFF</button>
+        </div>
+      </section>
+
+      <section class="view" id="device-view" data-view="device">
+        <div class="device-heading">
+          <button class="back" id="device-back">← ROOM</button>
+          <div class="eyebrow" id="device-type">LIGHT / 01</div>
+          <h2 id="device-title">FADO Lamp</h2>
+          <p id="device-subtitle">Tap, rotate and tune the atmosphere.</p>
+        </div>
+
+        <div class="control-panel" id="light-controls">
+          <div class="control-row split">
+            <div><span class="label">POWER</span><button class="power on" id="power-btn">ON</button></div>
+            <div><span class="label">LEVEL</span><strong id="brightness-value">68%</strong></div>
+          </div>
+          <input id="brightness" type="range" min="0" max="100" value="68" />
+          <div class="control-row"><span class="label">HUE</span><span id="hue-name">Warm white</span></div>
+          <div class="hue-track" id="hue-track" aria-label="Hue selector"><div class="hue-thumb" id="hue-thumb"></div></div>
+          <div class="swatches">
+            <button data-color="#f3d6a2" aria-label="Warm white"></button>
+            <button data-color="#d6e4ff" aria-label="Cool white"></button>
+            <button data-color="#ff826e" aria-label="Coral"></button>
+            <button data-color="#a78bfa" aria-label="Violet"></button>
+            <button data-color="#71d8c0" aria-label="Mint"></button>
+          </div>
+          <div class="control-row"><span class="label">TEMPERATURE</span><span id="temp-value">3100K</span></div>
+          <input id="temperature" type="range" min="2200" max="6500" value="3100" />
+        </div>
+
+        <div class="control-panel hidden" id="climate-controls">
+          <div class="dial-readout"><span>COOL</span><strong id="climate-value">23.5°</strong><small>AUTO · LOW</small></div>
+          <input id="climate" type="range" min="16" max="30" step="0.5" value="23.5" />
+          <div class="mode-grid"><button class="active">AUTO</button><button>COOL</button><button>DRY</button><button>FAN</button></div>
+        </div>
+
+        <div class="control-panel hidden" id="media-controls">
+          <div class="now-playing"><span class="label">NOW PLAYING</span><strong>Living Room</strong><p>Apple TV · HDMI 1</p></div>
+          <div class="transport"><button>‹‹</button><button class="play">Ⅱ</button><button>››</button></div>
+          <input type="range" min="0" max="100" value="42" />
+        </div>
+
+        <div class="control-panel hidden" id="vacuum-controls">
+          <div class="dial-readout"><span>STATUS</span><strong>DOCKED</strong><small>BATTERY 96%</small></div>
+          <div class="mode-grid"><button class="active">START</button><button>ROOM</button><button>DOCK</button><button>LOCATE</button></div>
+        </div>
+      </section>
+    </main>
+
+    <aside class="adaptive-menu" id="adaptive-menu">
+      <button data-nav="home">HOME</button>
+      <button data-room="living">LIVING</button>
+      <button data-room="bedroom">BEDROOM</button>
+      <button data-room="kitchen">KITCHEN</button>
+      <button id="menu-close">CLOSE</button>
+    </aside>
+
+    <div class="grain"></div>
+    <div class="transition-wash" id="transition-wash"></div>
+  </div>
+</body>
+</html>
